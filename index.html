@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="circular.css">
+    <title>Circular Process</title>
+</head>
+<body>
+    <h1>Mini circular progress </h1>
+    <div class="skill">
+        <div class="outer">
+            <div class="inner">
+                <div id="number">
+                    65%
+                </div>
+            </div>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="160px" height="160px">
+            <defs>
+               <linearGradient id="GradientColor">
+                  <stop offset="0%" stop-color="#e91e63" />
+                  <stop offset="100%" stop-color="#673ab7" />
+               </linearGradient>
+            </defs>
+            <circle cx="80" cy="80" r="70" stroke-linecap="round" />
+    </svg>
+    </div>
+    <div class="form">
+        <form action="">
+            <input type="number" id="percent" placeholder="Enter percentage">
+            <button type="button" onclick="setProgress(document.getElementById('percent').value)">Set Progress</button>
+        </form>
+    </div>
+    
+    <script>
+        let circle = document.querySelector('circle');
+        let radius = circle.r.baseVal.value; //70
+        let circumference = radius * 2 * Math.PI;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;//439.822971502571
+        circle.style.strokeDashoffset = circumference;
+        //dynamic circular progress bar
+        function setProgress(percent){
+            const progressOffset = circumference - percent / 100 * circumference;
+            circle.style.strokeDashoffset = progressOffset;
+            //animate the number in the middle of the circle
+            let number = document.getElementById('number');
+            let counter = 0;
+            let i = 0;
+            setInterval(() => {
+                if(counter == percent && i == percent){
+                    clearInterval();
+                }else{
+                    counter += 1;
+                    number.textContent = counter + '%';
+                    i += 1;
+                    const offset = circumference - i / 100 * circumference;
+                    circle.style.strokeDashoffset = offset;
+                }
+            }, 30);
+
+        }
+        setProgress(20);
+        
+    </script>
+</body>
+</html>
