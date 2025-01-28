@@ -29,7 +29,10 @@
     <div class="form">
         <form action="">
             <input type="number" id="percent" placeholder="Enter percentage">
-            <button type="button" onclick="setProgress(document.getElementById('percent').value)">Set Progress</button>
+            <button class="btn" id="button" type="button">
+                <span>Set progress</span>
+            </button>
+  
         </form>
     </div>
     
@@ -60,7 +63,24 @@
             }, 30);
 
         }
-        setProgress(20);
+
+        document.getElementById('button').addEventListener('click', () => {
+        const percent = document.getElementById('percent').value;
+        setProgress(percent);
+        // resert the input field
+        document.getElementById('percent').value = '';
+    });
+
+        document.getElementById('percent').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const percent = document.getElementById('percent').value;
+            setProgress(percent);
+            // resert the input field
+            document.getElementById('percent').value = '';
+        }
+        });
+        setProgress(50);
         
     </script>
 </body>
