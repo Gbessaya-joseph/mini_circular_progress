@@ -29,12 +29,12 @@ Le fichier `index.html` contient un script JavaScript qui gère l'animation de l
 
 Voici donc un aperçu de la page web:
 
-![](assets/20250128_131628_Capture_d'écran 2025-01-28 125622.png)
+![alt text](<assets/20250128_131628_Capture_d'écran 2025-01-28 125622.png>)
 
 ## Auteur
 
 Ce projet est inspiré d'une vidéo youtube dont voici le lien 👍
 
-> <iframe width="560" height="315" src="https://www.youtube.com/embed/mSfsGTIQlxg?si=NN7rc_2_3ruUvl9m" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+ <iframe width="560" height="315" src="https://www.youtube.com/embed/mSfsGTIQlxg?si=NN7rc_2_3ruUvl9m" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 Ce projet a été créé par Gbessaya-joseph.
