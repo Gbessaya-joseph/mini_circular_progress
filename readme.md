@@ -29,7 +29,6 @@ Le fichier `index.html` contient un script JavaScript qui gère l'animation de l
 
 Voici donc un aperçu de la page web:
 
-
 ![](assets/20250128_131628_Capture_d'écran 2025-01-28 125622.png)
 
 ## Auteur
