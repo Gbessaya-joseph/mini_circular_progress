@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="circular.css">
     <title>Circular Process</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </head>
 <body>
     <h1>Mini circular progress </h1>
@@ -36,7 +39,8 @@
         </form>
     </div>
     
-    <script>
+    <script >
+        
         let circle = document.querySelector('circle');
         let radius = circle.r.baseVal.value; //70
         let circumference = radius * 2 * Math.PI;
@@ -82,6 +86,307 @@
         });
         setProgress(50);
         
+
+            // Your existing JavaScript code
+    
+    // Add all the export functions here
+// First, add these libraries to your HTML head section:
+
+// Add this function to your existing JavaScript code
+function setupExportButtons() {
+  // Create export container
+  const exportContainer = document.createElement('div');
+  exportContainer.className = 'export-options';
+  exportContainer.style.marginTop = '20px';
+  exportContainer.style.display = 'flex';
+  exportContainer.style.justifyContent = 'center';
+  exportContainer.style.gap = '10px';
+  
+  // Create export buttons
+  const pdfButton = createExportButton('Export as PDF', exportToPDF);
+  const pngButton = createExportButton('Export as PNG', exportToPNG);
+  const svgButton = createExportButton('Export as SVG', exportToSVG);
+  const mdButton = createExportButton('Export as Markdown', exportToMarkdown);
+  
+  // Add buttons to container
+  exportContainer.appendChild(pdfButton);
+  exportContainer.appendChild(pngButton);
+  exportContainer.appendChild(svgButton);
+  exportContainer.appendChild(mdButton);
+  
+  // Add the container after the form
+  const formElement = document.querySelector('.form');
+  formElement.parentNode.insertBefore(exportContainer, formElement.nextSibling);
+  // Add the canva button
+  const canvaButton = createExportButton('Export for Canva', exportForCanva);
+  exportContainer.appendChild(canvaButton);
+}
+
+// Helper function to create styled buttons matching your design
+function createExportButton(text, clickHandler) {
+  const buttonContainer = document.createElement('button');
+  buttonContainer.className = 'btn';
+  buttonContainer.type = 'button';
+  
+  const span = document.createElement('span');
+  span.textContent = text;
+  
+  buttonContainer.appendChild(span);
+  buttonContainer.addEventListener('click', clickHandler);
+  
+  return buttonContainer;
+}
+
+// PDF Export Function
+function exportToPDF() {
+  const { jsPDF } = window.jspdf;
+  
+  // Create a new PDF document
+  const doc = new jsPDF('portrait', 'mm', 'a4');
+  
+  // Get the chart element
+  const chartElement = document.querySelector('.skill');
+  
+  // Get the current percentage value
+  const percentValue = document.getElementById('number').textContent;
+  
+  // Use html2canvas to convert the chart to an image
+  html2canvas(chartElement).then(canvas => {
+    // Add a title to the PDF
+    doc.setFontSize(22);
+    doc.setTextColor(140, 35, 200); // Purple color to match your design
+    doc.text('Mini Circular Progress', 105, 20, { align: 'center' });
+    
+    // Add the percentage as subtitle
+    doc.setFontSize(16);
+    doc.setTextColor(85, 85, 85); // Gray color for subtitle
+    doc.text(`Current Progress: ${percentValue}`, 105, 30, { align: 'center' });
+    
+    // Add current date
+    const today = new Date();
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Generated on: ${today.toLocaleDateString()}`, 105, 40, { align: 'center' });
+    
+    // Add the canvas as an image
+    const imgWidth = 100; // mm
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    const xPos = (210 - imgWidth) / 2; // Center horizontally on A4
+    
+    const imgData = canvas.toDataURL('image/png');
+    doc.addImage(imgData, 'PNG', xPos, 50, imgWidth, imgHeight);
+    
+    // Save the PDF
+    doc.save(`circular-progress-${percentValue.replace('%', '')}.pdf`);
+  });
+}
+
+// PNG Export Function
+function exportToPNG() {
+  const chartElement = document.querySelector('.skill');
+  const percentValue = document.getElementById('number').textContent.replace('%', '');
+  
+  html2canvas(chartElement, { 
+    backgroundColor: null, // Transparent background
+    scale: 2 // Higher resolution
+  }).then(canvas => {
+    // Create a link element
+    const link = document.createElement('a');
+    
+    // Set link properties
+    link.download = `circular-progress-${percentValue}.png`;
+    link.href = canvas.toDataURL('image/png');
+    
+    // Simulate click to trigger download
+    link.click();
+  });
+}
+
+// SVG Export Function
+function exportToSVG() {
+  const svgElement = document.querySelector('svg');
+  
+  if (svgElement) {
+    // Get the current percentage
+    const percentValue = document.getElementById('number').textContent.replace('%', '');
+    
+    // Clone the SVG to avoid modifying the original
+    const clonedSvg = svgElement.cloneNode(true);
+    
+    // Set the SVG attributes for standalone use
+    clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clonedSvg.setAttribute('version', '1.1');
+    
+    // Set viewBox if not already set
+    if (!clonedSvg.getAttribute('viewBox')) {
+      clonedSvg.setAttribute('viewBox', '0 0 160 160');
+    }
+    
+    // Add title element to SVG
+    const titleElement = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    titleElement.textContent = `Circular Progress - ${percentValue}%`;
+    clonedSvg.insertBefore(titleElement, clonedSvg.firstChild);
+    
+    // Add text element showing percentage
+    const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    textElement.setAttribute('x', '80');
+    textElement.setAttribute('y', '85');
+    textElement.setAttribute('text-anchor', 'middle');
+    textElement.setAttribute('font-family', 'Poppins, sans-serif');
+    textElement.setAttribute('font-size', '18');
+    textElement.setAttribute('fill', '#555');
+    textElement.textContent = `${percentValue}%`;
+    clonedSvg.appendChild(textElement);
+    
+    // Convert SVG to string
+    const svgData = new XMLSerializer().serializeToString(clonedSvg);
+    
+    // Create a Blob from the SVG data
+    const blob = new Blob([svgData], { type: 'image/svg+xml' });
+    
+    // Create a link to download the Blob
+    const link = document.createElement('a');
+    link.download = `circular-progress-${percentValue}.svg`;
+    link.href = URL.createObjectURL(blob);
+    
+    // Trigger download
+    link.click();
+  } else {
+    alert('SVG export is only available for SVG-based charts.');
+  }
+}
+
+// Markdown Export Function
+function exportToMarkdown() {
+  // Get current percentage
+  const percentValue = document.getElementById('number').textContent;
+  
+  // Create markdown content
+  let markdownContent = '# Mini Circular Progress\n\n';
+  markdownContent += `Current progress: **${percentValue}**\n\n`;
+  markdownContent += '## Progress Details\n\n';
+  markdownContent += '| Metric | Value |\n';
+  markdownContent += '|--------|-------|\n';
+  markdownContent += `| Progress | ${percentValue} |\n`;
+  markdownContent += `| Circle Radius | 70px |\n`;
+  markdownContent += `| Circumference | ${(70 * 2 * Math.PI).toFixed(2)}px |\n`;
+  
+  // Add ASCII art representation of progress circle
+  markdownContent += '\n## ASCII Representation\n\n';
+  markdownContent += '```\n';
+  
+  const percent = parseInt(percentValue);
+  // Simple ASCII progress bar
+  markdownContent += '[ ';
+  for (let i = 0; i < 10; i++) {
+    if (i < Math.floor(percent / 10)) {
+      markdownContent += '█';
+    } else {
+      markdownContent += '░';
+    }
+  }
+  markdownContent += ' ] ' + percentValue + '\n';
+  markdownContent += '```\n\n';
+  
+  // Add timestamp
+  const now = new Date();
+  markdownContent += `*Generated on ${now.toLocaleString()}*\n`;
+  
+  // Create a Blob with the markdown content
+  const blob = new Blob([markdownContent], { type: 'text/markdown' });
+  
+  // Create a link to download the markdown
+  const link = document.createElement('a');
+  link.download = `circular-progress-${percentValue.replace('%', '')}.md`;
+  link.href = URL.createObjectURL(blob);
+  
+  // Trigger download
+  link.click();
+}
+
+// Call this function when your page loads
+document.addEventListener('DOMContentLoaded', function() {
+  // Call setup function after a small delay to ensure the chart is rendered
+  setTimeout(setupExportButtons, 500);
+});
+
+    // Function to export in a format suitable for Canva
+function exportForCanva() {
+  const chartElement = document.querySelector('.skill');
+  const percentValue = document.getElementById('number').textContent.replace('%', '');
+  
+  html2canvas(chartElement, { 
+    backgroundColor: null, // Transparent background
+    scale: 4 // Higher resolution for better quality in Canva
+  }).then(canvas => {
+    // Create a higher resolution canvas with padding for Canva
+    const canvaCanvas = document.createElement('canvas');
+    const ctx = canvaCanvas.getContext('2d');
+    
+    // Set canvas dimensions with padding
+    canvaCanvas.width = canvas.width + 100;
+    canvaCanvas.height = canvas.height + 100;
+    
+    // Fill with white background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvaCanvas.width, canvaCanvas.height);
+    
+    // Draw the original canvas in the center
+    ctx.drawImage(canvas, 50, 50);
+    
+    // Add title and percentage text
+    ctx.font = 'bold 24px Poppins, sans-serif';
+    ctx.fillStyle = '#8d49fd';
+    ctx.textAlign = 'center';
+    ctx.fillText('Circular Progress Chart', canvaCanvas.width/2, 30);
+    
+    // Create a link element
+    const link = document.createElement('a');
+    
+    // Set link properties - use PNG as it's widely supported in Canva
+    link.download = `circular-progress-${percentValue}-for-canva.png`;
+    link.href = canvaCanvas.toDataURL('image/png');
+    
+    // Simulate click to trigger download
+    link.click();
+    
+    // Show usage instructions
+    showCanvaInstructions();
+  });
+}
+
+// Function to show Canva import instructions
+function showCanvaInstructions() {
+  // Create modal or alert with instructions
+  const instructionsDiv = document.createElement('div');
+  instructionsDiv.style.position = 'fixed';
+  instructionsDiv.style.top = '50%';
+  instructionsDiv.style.left = '50%';
+  instructionsDiv.style.transform = 'translate(-50%, -50%)';
+  instructionsDiv.style.backgroundColor = 'white';
+  instructionsDiv.style.padding = '20px';
+  instructionsDiv.style.borderRadius = '10px';
+  instructionsDiv.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+  instructionsDiv.style.zIndex = '1000';
+  instructionsDiv.style.maxWidth = '400px';
+  
+  instructionsDiv.innerHTML = `
+    <h3 style="color: #8d49fd; margin-bottom: 10px;">Canva Import Instructions</h3>
+    <ol style="margin-left: 20px; line-height: 1.5;">
+      <li>Open your Canva project</li>
+      <li>Click "Upload" in the left sidebar</li>
+      <li>Upload the downloaded PNG file</li>
+      <li>Drag the uploaded image onto your canvas</li>
+      <li>Resize as needed</li>
+    </ol>
+    <button style="background: #8d49fd; color: white; border: none; padding: 8px 16px; 
+    border-radius: 20px; cursor: pointer; margin-top: 10px;" onclick="this.parentNode.remove()">
+      Close
+    </button>
+  `;
+  
+  document.body.appendChild(instructionsDiv);
+}
     </script>
 </body>
 </html>
